@@ -134,7 +134,8 @@ const config = {
                     expandProps: 'start'
                 }
             } ]
-        } ]
+        },
+     ]
     },
     node: {
         // Allow the use of the real filename of the module being executed. By
