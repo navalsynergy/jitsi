@@ -9,14 +9,6 @@ import { connect } from '../../../redux';
 
 declare var interfaceConfig: Object;
 
-/**
- * The CSS style of the element with CSS class {@code rightwatermark}.
- *
- * @private
- */
-const _RIGHT_WATERMARK_STYLE = {
-    backgroundImage: 'url(images/rightwatermark.png)'
-};
 
 /**
  * The type of the React {@code Component} props of {@link Watermarks}.
@@ -106,47 +98,10 @@ class Watermarks extends Component<Props, State> {
                 {
                     this._renderJitsiWatermark()
                 }
-                {
-                    this._renderBrandWatermark()
-                }
-                {
-                    this._renderPoweredBy()
-                }
             </div>
         );
     }
 
-    /**
-     * Renders a brand watermark if it is enabled.
-     *
-     * @private
-     * @returns {ReactElement|null} Watermark element or null.
-     */
-    _renderBrandWatermark() {
-        let reactElement = null;
-
-        if (this.state.showBrandWatermark) {
-            reactElement = (
-                <div
-                    className = 'watermark rightwatermark'
-                    style = { _RIGHT_WATERMARK_STYLE } />
-            );
-
-            const { brandWatermarkLink } = this.state;
-
-            if (brandWatermarkLink) {
-                reactElement = (
-                    <a
-                        href = { brandWatermarkLink }
-                        target = '_new'>
-                        { reactElement }
-                    </a>
-                );
-            }
-        }
-
-        return reactElement;
-    }
 
     /**
      * Renders a Jitsi watermark if it is enabled.
@@ -156,27 +111,26 @@ class Watermarks extends Component<Props, State> {
      */
     _renderJitsiWatermark() {
         const {
-            _logoLink,
-            _logoUrl,
             _showJitsiWatermark
         } = this.props;
         let reactElement = null;
-const url  = 'https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1402&q=80'
+        const url  = 'https://durchere-deployment.s3.us-east-2.amazonaws.com/sites/durchere_text_logo.png'
         if (_showJitsiWatermark) {
             const style = {
                 backgroundImage: `url(${url})`,
-                maxWidth: 140,
-                maxHeight: 70
+                maxWidth: 370,
+                maxHeight: 65
             };
 
+        const logo_link = "https://www.durchere.com/"
             reactElement = (<div
                 className = 'watermark leftwatermark'
                 style = { style } />);
 
-            if (_logoLink) {
+            if (logo_link) {
                 reactElement = (
                     <a
-                        href = { _logoLink }
+                        href = { logo_link }
                         target = '_new'>
                         { reactElement }
                     </a>
@@ -187,28 +141,6 @@ const url  = 'https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?ixid=
         return reactElement;
     }
 
-    /**
-     * Renders a powered by block if it is enabled.
-     *
-     * @private
-     * @returns {ReactElement|null}
-     */
-    _renderPoweredBy() {
-        if (this.state.showPoweredBy) {
-            const { t } = this.props;
-
-            return (
-                <a
-                    className = 'poweredby'
-                    href = 'http://jitsi.org'
-                    target = '_new'>
-                    <span>{ t('poweredby') } jitsi.org</span>
-                </a>
-            );
-        }
-
-        return null;
-    }
 }
 
 /**

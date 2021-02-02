@@ -18,17 +18,17 @@ class Footer extends Component {
                             <div className="social-links">
                                 <ul>
                                     <li>
-                                        <a title="Join us on Facebook" href="/">
+                                        <a title="Join us on Facebook" target="_blank" href="https://www.facebook.com/Durchere-102317981861823">
                                             <img alt="Facbook logo" src="images/facebook.jpg" width="27" height="27" />
                                         </a>
                                     </li>
                                     <li>
-                                        <a title="Join us on Twitter" href="https://twitter.com/durchere/">
+                                        <a title="Join us on Twitter" target="_blank" href="https://twitter.com/durchere/">
                                             <img alt="Twitter logo" src="images/instagram.jpg" width="27" height="27" />
                                         </a>
                                     </li>
                                     <li>
-                                        <a title="Join us on Instagram" href="https://www.instagram.com/durchere/">
+                                        <a title="Join us on Instagram" target="_blank" href="https://www.instagram.com/durchere/">
                                             <img alt="Instagram logo" src="images/twitter.jpg" width="27" height="27" />
                                         </a>
                                     </li>
@@ -38,17 +38,17 @@ class Footer extends Component {
                         <div className="social-links-767 inline-flex">
                             <ul>
                                 <li>
-                                    <a title="Join us on Facebook" href="/">
+                                    <a title="Join us on Facebook" target="_blank" href="https://www.facebook.com/Durchere-102317981861823">
                                         <img alt="Facbook logo" src="images/facebook.jpg" width="27" height="27" />
                                     </a>
                                 </li>
                                 <li>
-                                    <a title="Join us on Twitter" href="https://twitter.com/durchere/">
+                                    <a title="Join us on Twitter" target="_blank" href="https://twitter.com/durchere/">
                                         <img alt="Twitter logo" src="images/twitter.jpg" width="27" height="27" />
                                     </a>
                                 </li>
                                 <li>
-                                    <a title="Join us on Instagram" href="https://www.instagram.com/durchere/">
+                                    <a title="Join us on Instagram" target="_blank" href="https://www.instagram.com/durchere/">
                                         <img alt="Instagram logo" src="images/instagram.jpg" width="27" height="27" />
                                     </a>
                                 </li>
