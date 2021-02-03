@@ -2179,8 +2179,8 @@ form {
   display: block;
   position: absolute;
   top: 15;
-  width: 71px;
-  height: 32px;
+  width: 370px;
+  height: 65px;
   background-size: contain;
   background-repeat: no-repeat;
   z-index: 2;
@@ -10362,7 +10362,6 @@ a, a:hover, a:focus {
   .footer {
     position: relative;
     width: 100%;
-    min-height: 260px;
     background: #000000;
     padding: 80px 0;
     z-index: 1;
@@ -10389,8 +10388,6 @@ a, a:hover, a:focus {
   }
   .social-links ul {
     padding: 0 20px !important;
-    -webkit-transform: translateY(9px);
-            transform: translateY(9px);
   }
   .footer-copy-right {
     text-align: right;
@@ -10417,7 +10414,6 @@ a, a:hover, a:focus {
   .footer {
     position: relative;
     width: 100%;
-    min-height: 260px;
     background: #000000;
     padding: 80px 0;
     z-index: 1;
@@ -10441,11 +10437,10 @@ a, a:hover, a:focus {
     color: #FFFFFF;
     font-size: 20px;
     padding: 0 20px;
+    white-space: nowrap;
   }
   .social-links ul {
     padding: 0 20px !important;
-    -webkit-transform: translateY(9px);
-            transform: translateY(9px);
   }
   .footer-copy-right {
     text-align: left;
@@ -10472,7 +10467,6 @@ a, a:hover, a:focus {
   .footer {
     position: relative;
     width: 100%;
-    min-height: 260px;
     background: #000000;
     padding: 40px 0;
     z-index: 1;
@@ -10507,8 +10501,6 @@ a, a:hover, a:focus {
   }
   .social-links ul {
     padding: 0 20px !important;
-    -webkit-transform: translateY(9px);
-            transform: translateY(9px);
   }
   .footer-copy-right {
     text-align: left;

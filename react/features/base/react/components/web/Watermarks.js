@@ -118,8 +118,7 @@ class Watermarks extends Component<Props, State> {
         if (_showJitsiWatermark) {
             const style = {
                 backgroundImage: `url(${url})`,
-                maxWidth: 370,
-                maxHeight: 65
+                backgroundSize: "370px 65px"
             };
 
         const logo_link = "https://www.durchere.com/"
