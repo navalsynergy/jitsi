@@ -181,7 +181,10 @@ class Conference extends AbstractConference<Props, *> {
             _showPrejoin
         } = this.props;
         const hideLabels = _iAmRecorder;
-
+        if(this.props._showPrejoin && this.props._showPrejoin){
+            localStorage.setItem("showPreJoin",true);
+        }
+        
         return (
             <div
                 className = { _layoutClassName }

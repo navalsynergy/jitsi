@@ -54,6 +54,13 @@ class Footer extends Component {
                                 </li>
                             </ul>
                         </div>
+                        <div className="float-section inline-block">
+                            <aside className="footer-copy-right" aria-label="The Fine Print.">
+                                <span className="copy-right-text">© 2021 Durchere INC.,&nbsp;
+                                        <a className="legal-link" to="#">Legal.</a>
+                                </span>
+                            </aside>
+                        </div>
                         <div>
                         </div>
                     </div>

@@ -22,25 +22,49 @@ import '../reducers';
 export class App extends AbstractApp{
   
     checkUserLogin() {
+     let showPreJoin = localStorage.getItem('showPreJoin');
+      if(showPreJoin === null){
         const urlParams = new URLSearchParams(window.location.search);
-        const accessKey = urlParams.get('accessKey');
-        const loginCheckUrl = DurchereMeetConstants.LOGIN_CHECK
-        fetch(loginCheckUrl, {
-          headers: {
-            "authorization": accessKey
-          }
-        })
-          .then(response => response.json())
-          .then(data => {
-            console.log("data",data)
-            if(data.status !== 200 && data !== true){
-              window.location.href = DurchereMeetConstants.LOGIN_URL
+        let accessKey = urlParams.get('accessKey');
+        if(accessKey !== null){
+          localStorage.setItem('accessKey',accessKey);
+        }
+        if(accessKey === null){
+          accessKey = localStorage.getItem('accessKey');
+        }
+        
+        if(accessKey !== null){
+          const loginCheckUrl = DurchereMeetConstants.LOGIN_CHECK
+          fetch(loginCheckUrl, {
+            headers: {
+              "authorization": accessKey
             }
           })
-          .catch(error => {
-           window.location.href = DurchereMeetConstants.LOGIN_URL
-           });
+            .then(response => response.json())
+            .then(data => {
+              
+                if(data.status !== 200 && data !== true){
+                  window.location.href = DurchereMeetConstants.LOGIN_URL
+                }
+         
+            })
+            .catch(error => {
+             window.location.href = DurchereMeetConstants.LOGIN_URL
+             });
+        }
+        else{
+          window.location.href = DurchereMeetConstants.LOGIN_URL
+        }
       }
+      else{
+        if(showPreJoin){
+          if(window.location.href === window.location.origin+"/"){
+            window.location.href = DurchereMeetConstants.LOGIN_URL
+          }
+        }
+      }
+        }
+
     /**
      * Overrides the parent method to inject {@link AtlasKitThemeProvider} as
      * the top most component.
@@ -48,6 +72,7 @@ export class App extends AbstractApp{
      * @override
      */
     _createMainElement(component, props) {
+      console.log("propsssssssssssss",this.props)
         return (
             <AtlasKitThemeProvider mode = 'dark'>
                 <ChromeExtensionBanner />
