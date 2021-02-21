@@ -95,7 +95,9 @@ class DeepLinkingMobilePage extends Component<Props> {
         const downloadButtonClassName
             = `${_SNS}__button ${_SNS}__button_primary`;
 
-
+            const styleMobileLogo = {
+                backgroundSize: "370px 65px"
+            };
         const onOpenLinkProperties = _downloadUrl
             ? {
                 // When opening a link to the download page, we want to let the
@@ -119,25 +121,25 @@ class DeepLinkingMobilePage extends Component<Props> {
                         HIDE_DEEP_LINKING_LOGO
                             ? null
                             : <img
-                                className = 'logo'
-                                src = 'images/logo-deep-linking.png' />
+                            style = { styleMobileLogo }
+                                src = 'images/durchere_text_logo.png' />
                     }
                 </div>
                 <div className = { `${_SNS}__body` }>
                     {
                         SHOW_DEEP_LINKING_IMAGE
                             ? <img
-                                className = 'image'
-                                src = 'images/deep-linking-image.png' />
+                            style = { styleMobileLogo }
+                                src = 'images/durchere_text_logo.png' />
                             : null
                     }
-                    <p className = { `${_SNS}__text` }>
+                    {/* <p className = { `${_SNS}__text` }>
                         { t(`${_TNS}.appNotInstalled`, { app: NATIVE_APP_NAME }) }
                     </p>
                     <p className = { `${_SNS}__text` }>
                         { t(`${_TNS}.ifHaveApp`) }
-                    </p>
-                    <a
+                    </p> */}
+                    {/* <a
                         { ...onOpenLinkProperties }
                         className = { `${_SNS}__href` }
                         href = { generateDeepLinkingURL() }
@@ -149,8 +151,8 @@ class DeepLinkingMobilePage extends Component<Props> {
                     </a>
                     <p className = { `${_SNS}__text` }>
                         { t(`${_TNS}.ifDoNotHaveApp`) }
-                    </p>
-                    <a
+                    </p> */}
+                    {/* <a
                         { ...onOpenLinkProperties }
                         href = { this._generateDownloadURL() }
                         onClick = { this._onDownloadApp }
@@ -158,7 +160,7 @@ class DeepLinkingMobilePage extends Component<Props> {
                         <button className = { downloadButtonClassName }>
                             { t(`${_TNS}.downloadApp`) }
                         </button>
-                    </a>
+                    </a> */}
                     {
                         isSupportedMobileBrowser()
                             && <a

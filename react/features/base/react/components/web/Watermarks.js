@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import { isVpaasMeeting } from '../../../../billing-counter/functions';
 import { translate } from '../../../i18n';
 import { connect } from '../../../redux';
-
+import DurchereMeetConstants from '../../../../app/constants/durchereMeetConstants'
 
 declare var interfaceConfig: Object;
 
@@ -114,7 +114,7 @@ class Watermarks extends Component<Props, State> {
             _showJitsiWatermark
         } = this.props;
         let reactElement = null;
-        const url  = 'https://durchere-deployment.s3.us-east-2.amazonaws.com/sites/durchere_text_logo.png'
+        const url  = DurchereMeetConstants.DURCHERE_MEET_LOGO
         if (_showJitsiWatermark) {
             const style = {
                 backgroundImage: `url(${url})`,
