@@ -95,9 +95,6 @@ class DeepLinkingMobilePage extends Component<Props> {
         const downloadButtonClassName
             = `${_SNS}__button ${_SNS}__button_primary`;
 
-            const styleMobileLogo = {
-                backgroundSize: "370px 65px"
-            };
         const onOpenLinkProperties = _downloadUrl
             ? {
                 // When opening a link to the download page, we want to let the
@@ -121,7 +118,7 @@ class DeepLinkingMobilePage extends Component<Props> {
                         HIDE_DEEP_LINKING_LOGO
                             ? null
                             : <img
-                            style = { styleMobileLogo }
+                            className = 'logo'
                                 src = 'images/durchere_text_logo.png' />
                     }
                 </div>
@@ -129,7 +126,7 @@ class DeepLinkingMobilePage extends Component<Props> {
                     {
                         SHOW_DEEP_LINKING_IMAGE
                             ? <img
-                            style = { styleMobileLogo }
+                            className = 'image'
                                 src = 'images/durchere_text_logo.png' />
                             : null
                     }

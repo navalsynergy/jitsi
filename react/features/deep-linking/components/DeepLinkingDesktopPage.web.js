@@ -75,9 +75,6 @@ class DeepLinkingDesktopPage<P : Props> extends Component<P> {
         const { HIDE_DEEP_LINKING_LOGO, NATIVE_APP_NAME, SHOW_DEEP_LINKING_IMAGE } = interfaceConfig;
         const rightColumnStyle
             = SHOW_DEEP_LINKING_IMAGE ? null : { width: '100%' };
-            const styleWebLogo = {
-                backgroundSize: "370px 65px"
-            };
         return (
 
             // Enabling light theme because of the color of the buttons.
@@ -88,7 +85,7 @@ class DeepLinkingDesktopPage<P : Props> extends Component<P> {
                             HIDE_DEEP_LINKING_LOGO
                                 ? null
                                 : <img
-                                style = { styleWebLogo }
+                                className = 'logo'
                                     src = 'images/durchere_text_logo.png' />
                         }
                     </div>
