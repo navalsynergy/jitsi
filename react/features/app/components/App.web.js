@@ -53,7 +53,13 @@ export class App extends AbstractApp{
              });
         }
         else{
-          window.location.href = DurchereMeetConstants.LOGIN_URL
+          if (accessKey === null && showPreJoin !== null) {
+            window.location.href = DurchereMeetConstants.LOGIN_URL
+          }
+          if (accessKey === null && showPreJoin === null
+            && (window.location.href === window.location.origin + "/")) {
+            window.location.href = DurchereMeetConstants.LOGIN_URL
+          }
         }
       }
       else{
