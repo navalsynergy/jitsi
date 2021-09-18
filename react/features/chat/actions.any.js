@@ -3,8 +3,10 @@
 import {
     ADD_MESSAGE,
     CLEAR_MESSAGES,
+    CLOSE_CHAT,
     SEND_MESSAGE,
-    SET_PRIVATE_MESSAGE_RECIPIENT
+    SET_PRIVATE_MESSAGE_RECIPIENT,
+    SET_IS_POLL_TAB_FOCUSED
 } from './actionTypes';
 
 /**
@@ -50,6 +52,19 @@ export function clearMessages() {
 }
 
 /**
+ * Action to signal the closing of the chat dialog.
+ *
+ * @returns {{
+ *     type: CLOSE_CHAT
+ * }}
+ */
+export function closeChat() {
+    return {
+        type: CLOSE_CHAT
+    };
+}
+
+/**
  * Sends a chat message to everyone in the conference.
  *
  * @param {string} message - The chat message to send out.
@@ -81,5 +96,18 @@ export function setPrivateMessageRecipient(participant: Object) {
     return {
         participant,
         type: SET_PRIVATE_MESSAGE_RECIPIENT
+    };
+}
+
+/**
+ * Set the value of _isPollsTabFocused.
+ *
+ * @param {boolean} isPollsTabFocused - The new value for _isPollsTabFocused.
+ * @returns {Function}
+ */
+export function setIsPollsTabFocused(isPollsTabFocused: boolean) {
+    return {
+        isPollsTabFocused,
+        type: SET_IS_POLL_TAB_FOCUSED
     };
 }

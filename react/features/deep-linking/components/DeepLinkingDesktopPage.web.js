@@ -1,6 +1,7 @@
 // @flow
 
-import Button, { ButtonGroup } from '@atlaskit/button';
+import ButtonGroup from '@atlaskit/button/button-group';
+import Button from '@atlaskit/button/standard-button';
 import { AtlasKitThemeProvider } from '@atlaskit/theme';
 import React, { Component } from 'react';
 import type { Dispatch } from 'redux';
@@ -75,6 +76,7 @@ class DeepLinkingDesktopPage<P : Props> extends Component<P> {
         const { HIDE_DEEP_LINKING_LOGO, NATIVE_APP_NAME, SHOW_DEEP_LINKING_IMAGE } = interfaceConfig;
         const rightColumnStyle
             = SHOW_DEEP_LINKING_IMAGE ? null : { width: '100%' };
+
         return (
 
             // Enabling light theme because of the color of the buttons.
@@ -85,8 +87,9 @@ class DeepLinkingDesktopPage<P : Props> extends Component<P> {
                             HIDE_DEEP_LINKING_LOGO
                                 ? null
                                 : <img
-                                className = 'logo'
-                                    src = 'images/durchere_text_logo.png' />
+                                    alt = { t('welcomepage.logo.logoDeepLinking') }
+                                    className = 'logo'
+                                    src = 'images/logo-deep-linking.png' />
                         }
                     </div>
                     <div className = 'content'>

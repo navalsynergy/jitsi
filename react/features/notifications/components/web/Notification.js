@@ -44,8 +44,6 @@ class Notification extends AbstractNotification<Props> {
         const {
             appearance,
             hideErrorSupportLink,
-            isDismissAllowed,
-            onDismissed,
             t,
             title,
             titleArguments,
@@ -60,8 +58,6 @@ class Notification extends AbstractNotification<Props> {
                 description = { this._renderDescription() }
                 icon = { this._mapAppearanceToIcon() }
                 id = { uid }
-                isDismissAllowed = { isDismissAllowed }
-                onDismissed = { onDismissed }
                 testId = { titleKey }
                 title = { title || t(titleKey, titleArguments) } />
         );
@@ -85,9 +81,9 @@ class Notification extends AbstractNotification<Props> {
 
         // the id is used for testing the UI
         return (
-            <div data-testid = { this._getDescriptionKey() } >
+            <p data-testid = { this._getDescriptionKey() } >
                 { description }
-            </div>
+            </p>
         );
     }
 
@@ -120,7 +116,7 @@ class Notification extends AbstractNotification<Props> {
                 }
             ];
 
-            if (!hideErrorSupportLink) {
+            if (!hideErrorSupportLink && interfaceConfig.SUPPORT_URL) {
                 buttons.push({
                     content: this.props.t('dialog.contactSupport'),
                     onClick: this._onOpenSupportLink

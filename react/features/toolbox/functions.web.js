@@ -1,9 +1,7 @@
 // @flow
 
+import { getToolbarButtons } from '../base/config';
 import { hasAvailableDevices } from '../base/devices';
-import { isMobileBrowser } from '../base/environment/utils';
-
-declare var interfaceConfig: Object;
 
 /**
  * Helper for getting the height of the toolbox.
@@ -21,23 +19,20 @@ export function getToolboxHeight() {
  *
  * @param {string} name - The name of the setting section as defined in
  * interface_config.js.
+ * @param {Object} state - The redux state.
  * @returns {boolean|undefined} - True to indicate that the given toolbar button
- * is enabled, false - otherwise. In cases where interfaceConfig is not available
- * undefined is returned.
+ * is enabled, false - otherwise.
  */
-export function isButtonEnabled(name: string) {
-    if (typeof interfaceConfig === 'object' && Array.isArray(interfaceConfig.TOOLBAR_BUTTONS)) {
-        return interfaceConfig.TOOLBAR_BUTTONS.indexOf(name) !== -1;
-    }
+export function isButtonEnabled(name: string, state: Object) {
+    const toolbarButtons = getToolbarButtons(state);
 
-    return undefined;
+    return toolbarButtons.indexOf(name) !== -1;
 }
-
 
 /**
  * Indicates if the toolbox is visible or not.
  *
- * @param {string} state - The state from the Redux store.
+ * @param {Object} state - The state from the Redux store.
  * @returns {boolean} - True to indicate that the toolbox is visible, false -
  * otherwise.
  */
@@ -49,17 +44,15 @@ export function isToolboxVisible(state: Object) {
         visible
     } = state['features/toolbox'];
     const { audioSettingsVisible, videoSettingsVisible } = state['features/settings'];
-    const { isOpen } = state['features/chat'];
-    const isMobileChatOpen = isMobileBrowser() && isOpen;
 
-    return Boolean(!isMobileChatOpen && !iAmSipGateway && (timeoutID || visible || alwaysVisible
+    return Boolean(!iAmSipGateway && (timeoutID || visible || alwaysVisible
                                       || audioSettingsVisible || videoSettingsVisible));
 }
 
 /**
  * Indicates if the audio settings button is disabled or not.
  *
- * @param {string} state - The state from the Redux store.
+ * @param {Object} state - The state from the Redux store.
  * @returns {boolean}
  */
 export function isAudioSettingsButtonDisabled(state: Object) {
@@ -71,7 +64,7 @@ export function isAudioSettingsButtonDisabled(state: Object) {
 /**
  * Indicates if the video settings button is disabled or not.
  *
- * @param {string} state - The state from the Redux store.
+ * @param {Object} state - The state from the Redux store.
  * @returns {boolean}
  */
 export function isVideoSettingsButtonDisabled(state: Object) {
@@ -81,9 +74,30 @@ export function isVideoSettingsButtonDisabled(state: Object) {
 /**
  * Indicates if the video mute button is disabled or not.
  *
- * @param {string} state - The state from the Redux store.
+ * @param {Object} state - The state from the Redux store.
  * @returns {boolean}
  */
 export function isVideoMuteButtonDisabled(state: Object) {
     return !hasAvailableDevices(state, 'videoInput');
+}
+
+/**
+ * If an overflow drawer should be displayed or not.
+ * This is usually done for mobile devices or on narrow screens.
+ *
+ * @param {Object} state - The state from the Redux store.
+ * @returns {boolean}
+ */
+export function showOverflowDrawer(state: Object) {
+    return state['features/toolbox'].overflowDrawer;
+}
+
+/**
+ * Indicates whether the toolbox is enabled or not.
+ *
+ * @param {Object} state - The state from the Redux store.
+ * @returns {boolean}
+ */
+export function isToolboxEnabled(state: Object) {
+    return state['features/toolbox'].enabled;
 }

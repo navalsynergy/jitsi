@@ -1,11 +1,13 @@
 // @flow
 
+import { CONFERENCE_JOINED } from '../base/conference';
 import { updateConfig } from '../base/config';
-import { SET_AUDIO_MUTED, SET_VIDEO_MUTED } from '../base/media';
+import { isIosMobileBrowser } from '../base/environment/utils';
+import { MEDIA_TYPE, SET_AUDIO_MUTED, SET_VIDEO_MUTED } from '../base/media';
 import { MiddlewareRegistry } from '../base/redux';
 import { updateSettings } from '../base/settings';
 import {
-    getLocalVideoTrack,
+    getLocalTracks,
     replaceLocalTrack,
     TRACK_ADDED,
     TRACK_NO_DATA_FROM_SOURCE
@@ -17,6 +19,7 @@ import {
     setDeviceStatusWarning,
     setPrejoinPageVisibility
 } from './actions';
+import { PREJOIN_SCREEN_STATES } from './constants';
 import { isPrejoinPageVisible } from './functions';
 
 declare var APP: Object;
@@ -33,7 +36,7 @@ MiddlewareRegistry.register(store => next => async action => {
         const { getState, dispatch } = store;
         const state = getState();
         const { userSelectedSkipPrejoin } = state['features/prejoin'];
-        const localVideoTrack = getLocalVideoTrack(state['features/base/tracks']);
+        let localTracks = getLocalTracks(state['features/base/tracks']);
         const { options } = action;
 
         options && store.dispatch(updateConfig(options));
@@ -42,13 +45,25 @@ MiddlewareRegistry.register(store => next => async action => {
             userSelectedSkipPrejoin
         }));
 
-        if (localVideoTrack?.muted) {
-            await dispatch(replaceLocalTrack(localVideoTrack.jitsiTrack, null));
+        // Do not signal audio/video tracks if the user joins muted.
+        for (const track of localTracks) {
+            // Always add the audio track on mobile Safari because of a known issue where audio playout doesn't happen
+            // if the user joins audio and video muted.
+            if (track.muted
+                && !(isIosMobileBrowser() && track.jitsiTrack && track.jitsiTrack.getType() === MEDIA_TYPE.AUDIO)) {
+                await dispatch(replaceLocalTrack(track.jitsiTrack, null));
+            }
         }
 
-        const jitsiTracks = getState()['features/base/tracks'].map(t => t.jitsiTrack);
+        // Re-fetch the local tracks after muted tracks have been removed above.
+        // This is needed, because the tracks are effectively disposed by the replaceLocalTrack and should not be used
+        // anymore.
+        localTracks = getLocalTracks(getState()['features/base/tracks']);
 
-        dispatch(setPrejoinPageVisibility(false));
+        const jitsiTracks = localTracks.map(t => t.jitsiTrack);
+
+        dispatch(setPrejoinPageVisibility(PREJOIN_SCREEN_STATES.LOADING));
+
         APP.conference.prejoinStart(jitsiTracks);
 
         break;
@@ -95,8 +110,23 @@ MiddlewareRegistry.register(store => next => async action => {
         }
         break;
     }
-
+    case CONFERENCE_JOINED:
+        return _conferenceJoined(store, next, action);
     }
 
     return next(action);
 });
+
+/**
+ * Handles cleanup of prejoin state when a conference is joined.
+ *
+ * @param {Object} store - The Redux store.
+ * @param {Function} next - The Redux next function.
+ * @param {Object} action - The Redux action.
+ * @returns {Object}
+ */
+function _conferenceJoined({ dispatch }, next, action) {
+    dispatch(setPrejoinPageVisibility(PREJOIN_SCREEN_STATES.HIDDEN));
+
+    return next(action);
+}

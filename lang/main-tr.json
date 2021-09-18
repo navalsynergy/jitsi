@@ -60,19 +60,20 @@
         "today": "Bugün"
     },
     "chat": {
-        "error": "Hata: mesajınız gönderilmedi. Gerekçe: {{error}}",
+        "error": "Hata: Mesajınız gönderilmedi. Neden: {{error}}",
         "fieldPlaceHolder": "Mesajınızı buraya yazın",
         "messagebox": "Bir mesaj yazın",
         "messageTo": "{{recipient}} adlı kişiye özel mesaj",
         "noMessagesMessage": "Toplantıda henüz mesaj yok. Burada bir konuşma başlatın!",
         "nickname": {
             "popover": "Bir takma ad seçin",
-            "title": "Sohbette kullanmak için bir takma ad girin"
+            "title": "Sohbette kullanmak için bir takma ad girin",
+            "titleWithPolls": "Sohbette kullanmak için bir takma ad girin"
         },
-	"privateNotice": "{{recipient}} için özel mesaj",
+	    "privateNotice": "{{recipient}} için özel mesaj",
         "title": "Sohbet",
+        "titleWithPolls": "Sohbet",
         "you": "sen"
-
     },
     "connectingOverlay": {
         "joiningRoom": "Toplantıya bağlanılıyor..."
@@ -225,6 +226,17 @@
         "micNotSendingDataTitle": "Mikrofona erişilemiyor.",
         "micPermissionDeniedError": "Mikrofon kullanımına izin vermediniz. Yine de toplantıya katılabilirsiniz, ancak diğerleri sizi duyamaz. Bunu düzeltmek için mikrofon butonunu kullanın.",
         "micUnknownError": "Bilinmeyen bir nedenden dolayı mikrofon kullanılamıyor.",
+        "muteEveryoneElseDialog" : "Susturulduğunda, mikrofonlarını sessizden çıkaramayacaksınız ancak onlar diledikleri zaman kendilerini sessizden çıkarabilirler.",
+        "muteEveryoneElseTitle" : "{{whom}} hariç herkesi sustur?",
+        "muteEveryoneDialog" : "Herkesi susturmak istediğinizden emin misiniz? Onları sessizden çıkaramayacaksınız ancak onlar kendilerini her zaman sessizden çıkarabilirler.",
+        "muteEveryoneTitle" : "Herkesi sustur?",
+        "muteEveryoneElsesVideoDialog" : "Kameraları devre dışı bırakıldığında geri açamayacaksınız, ancak onlar kameralarını her zaman açabilirler.",
+        "muteEveryoneElsesVideoTitle" : "{{whom}} hariç herkesin kamerasını devre dışı bırak?",
+        "muteEveryonesVideoDialog" : "Herkesin kamerasını devre dışı bırakmak istediğinizden emin misiniz? Kameralar devre dışı bırakıldığında geri açamayacaksınız, ancak onlar kameralarını her zaman açabilirler.",
+        "muteEveryonesVideoDialogOk" : "Kameraları Kapat",
+        "muteEveryonesVideoTitle" : "Herkesin kamerasını devre dışı bırak?",
+        "muteEveryoneSelf" : "Kendiniz",
+        "muteEveryoneStartMuted" : "Şu andan itibaren herkes sessizde başlayacak",
         "muteParticipantBody": "Sesi açamazsınız, ancak istedikleri zaman kendileri seslerini açabilirler.",
         "muteParticipantButton": "Sustur",
         "muteParticipantDialog": "Bu katılımcının sesini kapatmak istediğinizden emin misiniz? Sesini açamazsınız, ancak istedikleri zaman kendileri seslerini açabilirler.",
@@ -404,7 +416,7 @@
         "invalidStreamKey": "Canlı akış anahtarı yanlış olabilir.",
         "off": "Canlı Akış durduruldu",
         "offBy": "{{name}} canlı akışı durdurdu",
-        "on": "Canlı Akış",
+        "on": "Canlı Akış başlatıldı",
         "onBy": "{{name}} canlı akışı başlattı",
         "pending": "Canlı Akış başlatılıyor...",
         "serviceName": "Canlı Akış hizmeti",
@@ -564,7 +576,7 @@
         "live": "CANLI",
         "loggedIn": "{{userName}} olarak giriş yapıldı",
         "off": "Kayıt durdu",
-        "on": "Kaydediliyor",
+        "on": "Kayıt başladı",
         "pending": "Toplantıyı kaydetmeye hazırlanıyor ...",
         "rec": "KAYIT",
         "serviceDescription": "Kaydınız kayıt hizmeti tarafından kaydedilecektir",
@@ -688,7 +700,7 @@
             "show": "Sahnede göster",
             "speakerStats": "Konuşmacı istatistiklerini aç/kapat",
             "tileView": "Döşeme görünümünü aç/kapat",
-            "toggleCamera": "Kamerayı aç/kapat",
+            "toggleCamera": "Kamerayı değiştir",
             "videomute": "Sessiz videoyu aç/kapat",
             "videoblur": ""
         },
@@ -720,7 +732,7 @@
         "moreActions": "Daha fazla işlem",
         "moreOptions": "Daha fazla seçenek",
         "mute": "Sessiz / Sesli",
-        "muteEveryone": "Mute everyone",
+        "muteEveryone": "Herkesi sustur",
         "noAudioSignalTitle": "Mikrofonunuzdan hiçbir giriş gelmiyor!",
         "noAudioSignalDesc": "Sistem ayarlarından veya donanımdan sesi kapatmadıysanız, cihazınızı değiştirin.",
         "noAudioSignalDescSuggestion": "Sistem ayarlarından veya donanımdan kasıtlı olarak kapatmadıysanız, önerilen aygıta geçmeyi düşünün.",
@@ -730,7 +742,7 @@
         "noisyAudioInputDesc": "Mikrofonunuz gürültü yapıyor gibi görünüyor, lütfen cihazı kapatmayı veya değiştirmeyi düşünün.",
         "openChat": "Mesajlaşmayı aç",
         "pip": "Resim içinde Resim moduna gir",
-        "privateMessage": "Özel mesajgönder",
+        "privateMessage": "Özel mesaj gönder",
         "profile": "Profilinizi düzenleyin",
         "raiseHand": "Elinizi kaldırın/indirin",
         "raiseYourHand": "Elinizi kaldırın",
@@ -746,7 +758,7 @@
         "stopSharedVideo": "Youtube videosunu durdur",
         "talkWhileMutedPopup": "Bir şey mi dediniz? Mikrofonunuz kapalı.",
         "tileViewToggle": "Döşeme görünümünü aç/kapat",
-        "toggleCamera": "Kamerayı aç/kapat",
+        "toggleCamera": "Kamerayı değiştir",
         "videomute": "Kamera başlat / durdur",
         "startvideoblur": "",
         "stopvideoblur": ""
@@ -806,7 +818,7 @@
         "domute": "Sustur",
         "domuteOthers": "Diğer herkesi sustur",
         "flip": "Döndür",
-        "kick": "Çıkarıldı",
+        "kick": "Çıkar",
         "moderator": "Yönetici",
         "mute": "Katılımcı sessiz",
         "muted": "Sessiz",
@@ -844,7 +856,7 @@
         "sendFeedback": "Geri bildirim gönder",
         "terms": "Kurallar",
         "title": "Güvenli, tüm özelliklere erişimli ve tamamen ücretsiz görüntülü arama"
-       
+
     },
 
     "lonelyMeetingExperience": {

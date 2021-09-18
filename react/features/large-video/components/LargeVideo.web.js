@@ -4,13 +4,19 @@ import React, { Component } from 'react';
 
 import { Watermarks } from '../../base/react';
 import { connect } from '../../base/redux';
-import { InviteMore, Subject } from '../../conference';
+import { setColorAlpha } from '../../base/util';
 import { fetchCustomBrandingData } from '../../dynamic-branding';
+import { SharedVideo } from '../../shared-video/components/web';
 import { Captions } from '../../subtitles/';
 
 declare var interfaceConfig: Object;
 
 type Props = {
+
+    /**
+     * The alpha(opacity) of the background
+     */
+    _backgroundAlpha: number,
 
     /**
      * The user selected background color.
@@ -62,19 +68,19 @@ class LargeVideo extends Component<Props> {
      * @returns {React$Element}
      */
     render() {
+        const {
+            _isChatOpen,
+            _noAutoPlayVideo
+        } = this.props;
         const style = this._getCustomSyles();
-        const className = `videocontainer${this.props._isChatOpen ? ' shift-right' : ''}`;
+        const className = `videocontainer${_isChatOpen ? ' shift-right' : ''}`;
 
         return (
             <div
                 className = { className }
                 id = 'largeVideoContainer'
                 style = { style }>
-                <Subject />
-                <InviteMore />
-                <div id = 'sharedVideo'>
-                    <div id = 'sharedVideoIFrame' />
-                </div>
+                <SharedVideo />
                 <div id = 'etherpad' />
 
                 <Watermarks />
@@ -96,9 +102,11 @@ class LargeVideo extends Component<Props> {
                       * another container for the background and the
                       * largeVideoWrapper in order to hide/show them.
                       */}
-                    <div id = 'largeVideoWrapper'>
+                    <div
+                        id = 'largeVideoWrapper'
+                        role = 'figure' >
                         <video
-                            autoPlay = { !this.props._noAutoPlayVideo }
+                            autoPlay = { !_noAutoPlayVideo }
                             id = 'largeVideo'
                             muted = { true }
                             playsInline = { true } /* for Safari on iOS to work */ />
@@ -121,6 +129,12 @@ class LargeVideo extends Component<Props> {
         const { _customBackgroundColor, _customBackgroundImageUrl } = this.props;
 
         styles.backgroundColor = _customBackgroundColor || interfaceConfig.DEFAULT_BACKGROUND;
+
+        if (this.props._backgroundAlpha !== undefined) {
+            const alphaColor = setColorAlpha(styles.backgroundColor, this.props._backgroundAlpha);
+
+            styles.backgroundColor = alphaColor;
+        }
 
         if (_customBackgroundImageUrl) {
             styles.backgroundImage = `url(${_customBackgroundImageUrl})`;
@@ -145,6 +159,7 @@ function _mapStateToProps(state) {
     const { isOpen: isChatOpen } = state['features/chat'];
 
     return {
+        _backgroundAlpha: state['features/base/config'].backgroundAlpha,
         _customBackgroundColor: backgroundColor,
         _customBackgroundImageUrl: backgroundImageUrl,
         _isChatOpen: isChatOpen,

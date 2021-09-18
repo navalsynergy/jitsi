@@ -24,7 +24,7 @@ import {
     parseURIString,
     toURLString
 } from '../base/util';
-import { isVpaasMeeting } from '../billing-counter/functions';
+import { isVpaasMeeting } from '../jaas/functions';
 import { clearNotifications, showNotification } from '../notifications';
 import { setFatalError } from '../overlay';
 
@@ -33,7 +33,7 @@ import {
     getName
 } from './functions';
 import logger from './logger';
-import DurchereMeetConstants from './constants/durchereMeetConstants'
+
 declare var APP: Object;
 declare var interfaceConfig: Object;
 
@@ -153,11 +153,10 @@ export function appNavigate(uri: ?string) {
  * @returns {Function}
  */
 export function redirectWithStoredParams(pathname: string) {
-    localStorage.clear();
     return (dispatch: Dispatch<any>, getState: Function) => {
         const { locationURL } = getState()['features/base/connection'];
-        locationURL = window.location.href = DurchereMeetConstants.LOGIN_URL
         const newLocationURL = new URL(locationURL.href);
+
         newLocationURL.pathname = pathname;
         window.location.assign(newLocationURL.toString());
     };
@@ -259,6 +258,7 @@ export function reloadWithStoredParams() {
         const oldSearchString = windowLocation.search;
 
         windowLocation.replace(newURL.toString());
+
         if (newURL.search === oldSearchString) {
             // NOTE: Assuming that only the hash or search part of the URL will
             // be changed!
@@ -289,11 +289,10 @@ export function maybeRedirectToWelcomePage(options: Object = {}) {
         const {
             enableClosePage
         } = getState()['features/base/config'];
+
         // if close page is enabled redirect to it, without further action
         if (enableClosePage) {
-            console.log("I am in enableClose")
             if (isVpaasMeeting(getState())) {
-                console.log("I am in redirectToStaticPage")
                 redirectToStaticPage('/');
 
                 return;
@@ -311,13 +310,11 @@ export function maybeRedirectToWelcomePage(options: Object = {}) {
             let path = 'close.html';
 
             if (interfaceConfig.SHOW_PROMOTIONAL_CLOSE_PAGE) {
-                console.log("I am in If here::::::::::::::::, SHOW_PROMOTIONAL_CLOSE_PAGE ",hashParam, path)
                 if (Number(API_ID) === API_ID) {
                     hashParam = `#jitsi_meet_external_api_id=${API_ID}`;
                 }
                 path = 'close3.html';
             } else if (!options.feedbackSubmitted) {
-                console.log("I am in If here::::::::::::::::, SHOW_PROMOTIONAL_CLOSE_PAGE ", path)
                 path = 'close2.html';
             }
 

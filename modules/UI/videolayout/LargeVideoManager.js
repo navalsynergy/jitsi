@@ -6,20 +6,24 @@ import ReactDOM from 'react-dom';
 import { I18nextProvider } from 'react-i18next';
 import { Provider } from 'react-redux';
 
+import { createScreenSharingIssueEvent, sendAnalytics } from '../../../react/features/analytics';
 import { Avatar } from '../../../react/features/base/avatar';
 import { i18next } from '../../../react/features/base/i18n';
 import {
     JitsiParticipantConnectionStatus
 } from '../../../react/features/base/lib-jitsi-meet';
-import { VIDEO_TYPE } from '../../../react/features/base/media';
+import { MEDIA_TYPE, VIDEO_TYPE } from '../../../react/features/base/media';
 import { getParticipantById } from '../../../react/features/base/participants';
+import { getTrackByMediaTypeAndParticipant } from '../../../react/features/base/tracks';
 import { CHAT_SIZE } from '../../../react/features/chat';
 import {
     updateKnownLargeVideoResolution
 } from '../../../react/features/large-video/actions';
+import { getParticipantsPaneOpen } from '../../../react/features/participants-pane/functions';
+import theme from '../../../react/features/participants-pane/theme.json';
 import { PresenceLabel } from '../../../react/features/presence-status';
+import { shouldDisplayTileView } from '../../../react/features/video-layout';
 /* eslint-enable no-unused-vars */
-import UIEvents from '../../../service/UI/UIEvents';
 import { createDeferred } from '../../util/helpers';
 import AudioLevels from '../audio_levels/AudioLevels';
 
@@ -48,21 +52,19 @@ export default class LargeVideoManager {
     /**
      *
      */
-    constructor(emitter) {
+    constructor() {
         /**
          * The map of <tt>LargeContainer</tt>s where the key is the video
          * container type.
          * @type {Object.<string, LargeContainer>}
          */
         this.containers = {};
-        this.eventEmitter = emitter;
 
         this.state = VIDEO_CONTAINER_TYPE;
 
         // FIXME: We are passing resizeContainer as parameter which is calling
         // Container.resize. Probably there's better way to implement this.
-        this.videoContainer = new VideoContainer(
-            () => this.resizeContainer(VIDEO_CONTAINER_TYPE), emitter);
+        this.videoContainer = new VideoContainer(() => this.resizeContainer(VIDEO_CONTAINER_TYPE));
         this.addContainer(VIDEO_CONTAINER_TYPE, this.videoContainer);
 
         // use the same video container to handle desktop tracks
@@ -203,8 +205,7 @@ export default class LargeVideoManager {
             // FIXME this does not really make sense, because the videoType
             // (camera or desktop) is a completely different thing than
             // the video container type (Etherpad, SharedVideo, VideoContainer).
-            const isVideoContainer
-                = LargeVideoManager.isVideoContainer(videoType);
+            const isVideoContainer = LargeVideoManager.isVideoContainer(videoType);
 
             this.newStreamData = null;
 
@@ -219,14 +220,15 @@ export default class LargeVideoManager {
             this.updateAvatar();
 
             const isVideoMuted = !stream || stream.isMuted();
-            const participant = getParticipantById(APP.store.getState(), id);
+            const state = APP.store.getState();
+            const participant = getParticipantById(state, id);
             const connectionStatus = participant?.connectionStatus;
             const isVideoRenderable = !isVideoMuted
                 && (APP.conference.isLocalId(id) || connectionStatus === JitsiParticipantConnectionStatus.ACTIVE);
-
+            const isAudioOnly = APP.conference.isAudioOnly();
             const showAvatar
                 = isVideoContainer
-                    && ((APP.conference.isAudioOnly() && videoType !== VIDEO_TYPE.DESKTOP) || !isVideoRenderable);
+                    && ((isAudioOnly && videoType !== VIDEO_TYPE.DESKTOP) || !isVideoRenderable);
 
             let promise;
 
@@ -238,6 +240,29 @@ export default class LargeVideoManager {
                 // If the intention of this switch is to show the avatar
                 // we need to make sure that the video is hidden
                 promise = container.hide();
+
+                if ((!shouldDisplayTileView(state) || participant?.pinned) // In theory the tile view may not be
+                // enabled yet when we auto pin the participant.
+
+                        && participant && !participant.local && !participant.isFakeParticipant) {
+                    // remote participant only
+                    const track = getTrackByMediaTypeAndParticipant(
+                        state['features/base/tracks'], MEDIA_TYPE.VIDEO, id);
+                    const isScreenSharing = track?.videoType === 'desktop';
+
+                    if (isScreenSharing) {
+                        // send the event
+                        sendAnalytics(createScreenSharingIssueEvent({
+                            source: 'large-video',
+                            connectionStatus,
+                            isVideoMuted,
+                            isAudioOnly,
+                            isVideoContainer,
+                            videoType
+                        }));
+                    }
+                }
+
             } else {
                 promise = container.show();
             }
@@ -274,7 +299,6 @@ export default class LargeVideoManager {
             // after everything is done check again if there are any pending
             // new streams.
             this.updateInProcess = false;
-            this.eventEmitter.emit(UIEvents.LARGE_VIDEO_ID_CHANGED, this.id);
             this.scheduleLargeVideoUpdate();
         });
     }
@@ -344,9 +368,15 @@ export default class LargeVideoManager {
         }
 
         let widthToUse = this.preferredWidth || window.innerWidth;
-        const { isOpen } = APP.store.getState()['features/chat'];
+        const state = APP.store.getState();
+        const { isOpen } = state['features/chat'];
+        const isParticipantsPaneOpen = getParticipantsPaneOpen(state);
 
-        if (isOpen) {
+        if (isParticipantsPaneOpen) {
+            widthToUse -= theme.participantsPaneWidth;
+        }
+
+        if (isOpen && window.innerWidth > 580) {
             /**
              * If chat state is open, we re-compute the container width
              * by subtracting the default width of the chat.

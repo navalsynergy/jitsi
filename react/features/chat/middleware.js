@@ -18,11 +18,21 @@ import {
 } from '../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 import { playSound, registerSound, unregisterSound } from '../base/sounds';
-import { showToolbox } from '../toolbox/actions';
-import { isButtonEnabled } from '../toolbox/functions';
+import { openDisplayNamePrompt } from '../display-name';
+import { resetNbUnreadPollsMessages } from '../polls/actions';
+import { ADD_REACTION_MESSAGE } from '../reactions/actionTypes';
+import { pushReactions } from '../reactions/actions.any';
+import { ENDPOINT_REACTION_NAME } from '../reactions/constants';
+import { getReactionMessageFromBuffer, isReactionsEnabled } from '../reactions/functions.any';
+import { endpointMessageReceived } from '../subtitles';
+import {
+    showToolbox
+} from '../toolbox/actions';
 
-import { SEND_MESSAGE, SET_PRIVATE_MESSAGE_RECIPIENT } from './actionTypes';
-import { addMessage, clearMessages, toggleChat } from './actions';
+
+import { ADD_MESSAGE, SEND_MESSAGE, OPEN_CHAT, CLOSE_CHAT, SET_IS_POLL_TAB_FOCUSED } from './actionTypes';
+import { addMessage, clearMessages } from './actions';
+import { closeChat } from './actions.any';
 import { ChatPrivacyDialog } from './components';
 import {
     CHAT_VIEW_MODAL_ID,
@@ -31,6 +41,7 @@ import {
     MESSAGE_TYPE_LOCAL,
     MESSAGE_TYPE_REMOTE
 } from './constants';
+import { getUnreadCount } from './functions';
 import { INCOMING_MSG_SOUND_FILE } from './sounds';
 
 declare var APP: Object;
@@ -51,9 +62,20 @@ const PRIVACY_NOTICE_TIMEOUT = 20 * 1000;
  * @returns {Function}
  */
 MiddlewareRegistry.register(store => next => action => {
-    const { dispatch } = store;
+    const { dispatch, getState } = store;
+    const localParticipant = getLocalParticipant(getState());
+    let isOpen, unreadCount;
 
     switch (action.type) {
+    case ADD_MESSAGE:
+        unreadCount = action.hasRead ? 0 : getUnreadCount(getState()) + 1;
+        isOpen = getState()['features/chat'].isOpen;
+
+        if (typeof APP !== 'undefined') {
+            APP.API.notifyChatUpdated(unreadCount, isOpen);
+        }
+        break;
+
     case APP_WILL_MOUNT:
         dispatch(
                 registerSound(INCOMING_MSG_SOUND_ID, INCOMING_MSG_SOUND_FILE));
@@ -66,6 +88,48 @@ MiddlewareRegistry.register(store => next => action => {
     case CONFERENCE_JOINED:
         _addChatMsgListener(action.conference, store);
         break;
+
+    case OPEN_CHAT:
+        if (navigator.product === 'ReactNative') {
+            if (localParticipant.name) {
+                dispatch(setActiveModalId(CHAT_VIEW_MODAL_ID));
+            } else {
+                dispatch(openDisplayNamePrompt(() => {
+                    dispatch(setActiveModalId(CHAT_VIEW_MODAL_ID));
+                }));
+            }
+        } else {
+            dispatch(setActiveModalId(CHAT_VIEW_MODAL_ID));
+        }
+
+        unreadCount = 0;
+
+        if (typeof APP !== 'undefined') {
+            APP.API.notifyChatUpdated(unreadCount, true);
+        }
+        break;
+
+    case CLOSE_CHAT: {
+        const isPollTabOpen = getState()['features/chat'].isPollsTabFocused;
+
+        unreadCount = 0;
+
+        if (typeof APP !== 'undefined') {
+            APP.API.notifyChatUpdated(unreadCount, false);
+        }
+
+        if (isPollTabOpen) {
+            dispatch(resetNbUnreadPollsMessages());
+        }
+
+        dispatch(setActiveModalId());
+        break;
+    }
+
+    case SET_IS_POLL_TAB_FOCUSED: {
+        dispatch(resetNbUnreadPollsMessages());
+        break;
+    }
 
     case SEND_MESSAGE: {
         const state = store.getState();
@@ -101,10 +165,13 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
 
-    case SET_PRIVATE_MESSAGE_RECIPIENT: {
-        Boolean(action.participant) && dispatch(setActiveModalId(CHAT_VIEW_MODAL_ID));
-        _maybeFocusField();
-        break;
+    case ADD_REACTION_MESSAGE: {
+        _handleReceivedMessage(store, {
+            id: localParticipant.id,
+            message: action.message,
+            privateMessage: false,
+            timestamp: Date.now()
+        }, false);
     }
     }
 
@@ -124,7 +191,7 @@ StateListenerRegistry.register(
 
             if (getState()['features/chat'].isOpen) {
                 // Closes the chat if it's left open.
-                dispatch(toggleChat());
+                dispatch(closeChat());
             }
 
             // Clear chat messages.
@@ -152,10 +219,8 @@ StateListenerRegistry.register(
  * @returns {void}
  */
 function _addChatMsgListener(conference, store) {
-    if ((typeof APP !== 'undefined' && !isButtonEnabled('chat'))
-        || store.getState()['features/base/config'].iAmRecorder) {
-        // We don't register anything on web if the chat button is not enabled in interfaceConfig
-        // or we are in iAmRecorder mode
+    if (store.getState()['features/base/config'].iAmRecorder) {
+        // We don't register anything on web if we are in iAmRecorder mode
         return;
     }
 
@@ -182,6 +247,33 @@ function _addChatMsgListener(conference, store) {
             });
         }
     );
+
+    conference.on(
+        JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
+        (...args) => {
+            const state = store.getState();
+
+            if (!isReactionsEnabled(state)) {
+                return;
+            }
+
+            store.dispatch(endpointMessageReceived(...args));
+
+            if (args && args.length >= 2) {
+                const [ { _id }, eventData ] = args;
+
+                if (eventData.name === ENDPOINT_REACTION_NAME) {
+                    store.dispatch(pushReactions(eventData.reactions));
+
+                    _handleReceivedMessage(store, {
+                        id: _id,
+                        message: getReactionMessageFromBuffer(eventData.reactions),
+                        privateMessage: false,
+                        timestamp: eventData.timestamp
+                    }, false);
+                }
+            }
+        });
 
     conference.on(
         JitsiConferenceEvents.CONFERENCE_ERROR, (errorType, error) => {
@@ -211,14 +303,20 @@ function _handleChatError({ dispatch }, error) {
  *
  * @param {Store} store - The Redux store.
  * @param {Object} message - The message object.
+ * @param {boolean} shouldPlaySound - Whether or not to play the incoming message sound.
  * @returns {void}
  */
-function _handleReceivedMessage({ dispatch, getState }, { id, message, privateMessage, timestamp }) {
+function _handleReceivedMessage({ dispatch, getState },
+        { id, message, privateMessage, timestamp },
+        shouldPlaySound = true
+) {
     // Logic for all platforms:
     const state = getState();
     const { isOpen: isChatOpen } = state['features/chat'];
+    const { iAmRecorder } = state['features/base/config'];
+    const { soundsIncomingMessage: soundEnabled } = state['features/base/settings'];
 
-    if (!isChatOpen) {
+    if (soundEnabled && shouldPlaySound && !isChatOpen) {
         dispatch(playSound(INCOMING_MSG_SOUND_ID));
     }
 
@@ -249,23 +347,14 @@ function _handleReceivedMessage({ dispatch, getState }, { id, message, privateMe
             body: message,
             id,
             nick: displayName,
+            privateMessage,
             ts: timestamp
         });
 
-        dispatch(showToolbox(4000));
-    }
-}
+        if (!iAmRecorder) {
+            dispatch(showToolbox(4000));
+        }
 
-/**
- * Focuses the chat text field on web after the message recipient was updated, if needed.
- *
- * @returns {void}
- */
-function _maybeFocusField() {
-    if (navigator.product !== 'ReactNative') {
-        const textField = document.getElementById('usermsg');
-
-        textField && textField.focus();
     }
 }
 

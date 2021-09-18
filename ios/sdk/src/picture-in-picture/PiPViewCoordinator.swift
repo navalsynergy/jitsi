@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import UIKit
+
 public typealias AnimationCompletion = (Bool) -> Void
 
 public protocol PiPViewCoordinatorDelegate: class {
@@ -27,7 +29,7 @@ public protocol PiPViewCoordinatorDelegate: class {
 /// when is presented in Picure in Picture mode.
 public class PiPViewCoordinator {
 
-    /// Limits the boundries of view position on screen when minimized
+    /// Limits the boundaries of view position on screen when minimized
     public var dragBoundInsets: UIEdgeInsets = UIEdgeInsets(top: 25,
                                                             left: 5,
                                                             bottom: 5,
@@ -142,7 +144,6 @@ public class PiPViewCoordinator {
     /// screen size changes
     public func resetBounds(bounds: CGRect) {
         currentBounds = bounds
-        exitPictureInPicture()
     }
 
     /// Stop the dragging gesture of the root view

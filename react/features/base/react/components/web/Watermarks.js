@@ -2,13 +2,21 @@
 
 import React, { Component } from 'react';
 
-import { isVpaasMeeting } from '../../../../billing-counter/functions';
+import { isVpaasMeeting } from '../../../../jaas/functions';
 import { translate } from '../../../i18n';
 import { connect } from '../../../redux';
-import DurchereMeetConstants from '../../../../app/constants/durchereMeetConstants'
+
 
 declare var interfaceConfig: Object;
 
+/**
+ * The CSS style of the element with CSS class {@code rightwatermark}.
+ *
+ * @private
+ */
+const _RIGHT_WATERMARK_STYLE = {
+    backgroundImage: 'url(images/rightwatermark.png)'
+};
 
 /**
  * The type of the React {@code Component} props of {@link Watermarks}.
@@ -98,38 +106,38 @@ class Watermarks extends Component<Props, State> {
                 {
                     this._renderJitsiWatermark()
                 }
+                {
+                    this._renderBrandWatermark()
+                }
+                {
+                    this._renderPoweredBy()
+                }
             </div>
         );
     }
 
-
     /**
-     * Renders a Jitsi watermark if it is enabled.
+     * Renders a brand watermark if it is enabled.
      *
      * @private
-     * @returns {ReactElement|null}
+     * @returns {ReactElement|null} Watermark element or null.
      */
-    _renderJitsiWatermark() {
-        const {
-            _showJitsiWatermark
-        } = this.props;
+    _renderBrandWatermark() {
         let reactElement = null;
-        const url  = DurchereMeetConstants.DURCHERE_MEET_LOGO
-        if (_showJitsiWatermark) {
-            const style = {
-                backgroundImage: `url(${url})`,
-                backgroundSize: "370px 65px"
-            };
 
-        const logo_link = "https://www.durchere.com/"
-            reactElement = (<div
-                className = 'watermark leftwatermark'
-                style = { style } />);
+        if (this.state.showBrandWatermark) {
+            reactElement = (
+                <div
+                    className = 'watermark rightwatermark'
+                    style = { _RIGHT_WATERMARK_STYLE } />
+            );
 
-            if (logo_link) {
+            const { brandWatermarkLink } = this.state;
+
+            if (brandWatermarkLink) {
                 reactElement = (
                     <a
-                        href = { logo_link }
+                        href = { brandWatermarkLink }
                         target = '_new'>
                         { reactElement }
                     </a>
@@ -140,6 +148,71 @@ class Watermarks extends Component<Props, State> {
         return reactElement;
     }
 
+    /**
+     * Renders a Jitsi watermark if it is enabled.
+     *
+     * @private
+     * @returns {ReactElement|null}
+     */
+    _renderJitsiWatermark() {
+        const {
+            _logoLink,
+            _logoUrl,
+            _showJitsiWatermark
+        } = this.props;
+        const { t } = this.props;
+        let reactElement = null;
+
+        if (_showJitsiWatermark) {
+            const style = {
+                backgroundImage: `url(${_logoUrl})`,
+                maxWidth: 140,
+                maxHeight: 70,
+                position: _logoLink ? 'static' : 'absolute'
+            };
+
+            reactElement = (<div
+                className = 'watermark leftwatermark'
+                style = { style } />);
+
+            if (_logoLink) {
+                reactElement = (
+                    <a
+                        aria-label = { t('jitsiHome', { logo: interfaceConfig.APP_NAME }) }
+                        className = 'watermark leftwatermark'
+                        href = { _logoLink }
+                        target = '_new'>
+                        { reactElement }
+                    </a>
+                );
+            }
+        }
+
+        return reactElement;
+    }
+
+    /**
+     * Renders a powered by block if it is enabled.
+     *
+     * @private
+     * @returns {ReactElement|null}
+     */
+    _renderPoweredBy() {
+        if (this.state.showPoweredBy) {
+            const { t } = this.props;
+
+            return (
+                <a
+                    className = 'poweredby'
+                    href = 'http://jitsi.org'
+                    target = '_new'>
+                    <span>{ t('poweredby') } jitsi.org</span>
+                </a>
+            );
+        }
+
+        return null;
+    }
 }
 
 /**

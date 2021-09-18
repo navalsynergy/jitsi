@@ -38,24 +38,14 @@ export class AbstractApp extends BaseApp<Props, *> {
      *
      * @inheritdoc
      */
-    constructor(props: Object) {
-        super(props);
-
-        this.state = {
-            route: {},
-            store: undefined,
-            allowToMeet:false
-        };
-        this.checkUserLogin =this.checkUserLogin.bind(this);
-    }
     componentDidMount() {
         super.componentDidMount();
+
         this._init.then(() => {
             // If a URL was explicitly specified to this React Component, then
             // open it; otherwise, use a default.
             this._openURL(toURLString(this.props.url) || this._getDefaultURL());
         });
-        this.checkUserLogin();
     }
 
     /**
@@ -83,7 +73,7 @@ export class AbstractApp extends BaseApp<Props, *> {
     }
 
     /**
-     * Creates an extra {@link ReactElement}s to be added (unconditionaly)
+     * Creates an extra {@link ReactElement}s to be added (unconditionally)
      * alongside the main element.
      *
      * @abstract
