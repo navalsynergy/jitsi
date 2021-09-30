@@ -1,0 +1,44 @@
+.copy-button {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  padding: 8px 8px 8px 16px;
+  margin-top: 8px;
+  width: calc(100% - 24px);
+  height: 24px;
+  background: #0376DA;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.copy-button:hover {
+  background: #278ADF;
+  font-weight: 600;
+}
+
+.copy-button-content {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 292px;
+  margin-right: 16px;
+}
+
+.copy-button-content.selected {
+  font-weight: 600;
+}
+
+.copy-button.clicked {
+  background: #31B76A;
+}
+
+.copy-button > div > svg > path {
+  fill: #fff;
+}
+/*# sourceMappingURL=copy.css.map */
