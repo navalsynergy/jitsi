@@ -1,13 +1,14 @@
 // @flow
 
 import { AtlasKitThemeProvider } from '@atlaskit/theme';
-import React from 'react';
+import React, { Component } from 'react';
 
 import { DialogContainer } from '../../base/dialog';
-import JitsiThemeProvider from '../../base/ui/components/JitsiThemeProvider';
 import { ChromeExtensionBanner } from '../../chrome-extension-banner';
 
 import { AbstractApp } from './AbstractApp';
+
+import DurchereMeetConstants from '../constants/durchereMeetConstants'
 
 // Register middlewares and reducers.
 import '../middlewares';
@@ -18,7 +19,58 @@ import '../reducers';
  *
  * @extends AbstractApp
  */
-export class App extends AbstractApp {
+export class App extends AbstractApp{
+  
+    checkUserLogin() {
+     let showPreJoin = localStorage.getItem('showPreJoin');
+      if(showPreJoin === null){
+        const urlParams = new URLSearchParams(window.location.search);
+        let accessKey = urlParams.get('accessKey');
+        if(accessKey !== null){
+          localStorage.setItem('accessKey',accessKey);
+        }
+        if(accessKey === null){
+          accessKey = localStorage.getItem('accessKey');
+        }
+        
+        if(accessKey !== null){
+          const loginCheckUrl = DurchereMeetConstants.LOGIN_CHECK
+          fetch(loginCheckUrl, {
+            headers: {
+              "authorization": accessKey
+            }
+          })
+            .then(response => response.json())
+            .then(data => {
+              
+                if(data.status !== 200 && data !== true){
+                  window.location.href = DurchereMeetConstants.LOGIN_URL
+                }
+         
+            })
+            .catch(error => {
+             window.location.href = DurchereMeetConstants.LOGIN_URL
+             });
+        }
+        else{
+          if (accessKey === null && showPreJoin !== null) {
+            window.location.href = DurchereMeetConstants.LOGIN_URL
+          }
+          if (accessKey === null && showPreJoin === null
+            && (window.location.href === window.location.origin + "/")) {
+            window.location.href = DurchereMeetConstants.LOGIN_URL
+          }
+        }
+      }
+      else{
+        if(showPreJoin){
+          if(window.location.href === window.location.origin+"/"){
+            window.location.href = DurchereMeetConstants.LOGIN_URL
+          }
+        }
+      }
+        }
+
     /**
      * Overrides the parent method to inject {@link AtlasKitThemeProvider} as
      * the top most component.
@@ -27,12 +79,10 @@ export class App extends AbstractApp {
      */
     _createMainElement(component, props) {
         return (
-            <JitsiThemeProvider>
-                <AtlasKitThemeProvider mode = 'dark'>
-                    <ChromeExtensionBanner />
-                    { super._createMainElement(component, props) }
-                </AtlasKitThemeProvider>
-            </JitsiThemeProvider>
+            <AtlasKitThemeProvider mode = 'dark'>
+                <ChromeExtensionBanner />
+                { super._createMainElement(component, props) }
+            </AtlasKitThemeProvider>
         );
     }
 
@@ -43,11 +93,9 @@ export class App extends AbstractApp {
      */
     _renderDialogContainer() {
         return (
-            <JitsiThemeProvider>
-                <AtlasKitThemeProvider mode = 'dark'>
-                    <DialogContainer />
-                </AtlasKitThemeProvider>
-            </JitsiThemeProvider>
+            <AtlasKitThemeProvider mode = 'dark'>
+                <DialogContainer />
+            </AtlasKitThemeProvider>
         );
     }
 }
