@@ -22,11 +22,12 @@ const keycloak = new Keycloak({
     realm: "whapp",
     url: "http://18.118.241.99:8000/auth/",
     clientId: "wh_ui_1",
-    secret: "fa5e03de-7959-4547-9ceb-b8d3113cc0f2",
+    secret: "fa5e03de-7959-4547-9ceb-b8d3113cc0f2"
 });
 
 const keycloakProviderInitConfig = {
     onLoad: "login-required",
+    checkLoginIframe: false
 };
 
 /**
