@@ -19,10 +19,9 @@ import Keycloak from "keycloak-js";
 import { KeycloakProvider } from "@react-keycloak/web";
 
 const keycloak = new Keycloak({
-    realm: "whapp",
-    url: "http://18.118.241.99:8000/auth/",
-    clientId: "wh_ui_1",
-    secret: "fa5e03de-7959-4547-9ceb-b8d3113cc0f2"
+    realm: "durchere",
+    url: "https://qa-auth.durchere.in/auth",
+    clientId: "durchere-meeting"
 });
 
 const keycloakProviderInitConfig = {
