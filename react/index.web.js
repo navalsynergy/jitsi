@@ -11,8 +11,32 @@ import { Platform } from './features/base/react';
 import { getJitsiMeetGlobalNS } from './features/base/util';
 import PrejoinApp from './features/prejoin/components/PrejoinApp';
 
+import Keycloak from "keycloak-js";
+import { KeycloakProvider } from "@react-keycloak/web";
+
+const keycloak = new Keycloak({
+    realm: "durchere",
+    url: "https://qa-auth.durchere.in/auth",
+    clientId: "durchere-meeting"
+});
+
+const keycloakProviderInitConfig = {
+    onLoad: "login-required",
+    checkLoginIframe: false
+};
+
 const logger = getLogger('index.web');
 const OS = Platform.OS;
+
+const onKeycloakEvent = (event, error) => {
+    console.log("onKeycloakEvent", event, error);
+};
+
+const onKeycloakTokens = (tokens) => {
+    console.log("onKeycloakTokens", tokens);
+    // localStorage.setItem('isLoggedIn',true)
+    // this.props.actions.setLoggedInStatus()
+};
 
 
 
@@ -71,7 +95,14 @@ globalNS.renderEntryPoint = ({
     elementId = 'react'
 }) => {
     ReactDOM.render(
-        <Component { ...props } />,
+        <KeycloakProvider
+        keycloak={keycloak}
+        initConfig={keycloakProviderInitConfig}
+        onEvent={onKeycloakEvent}
+        onTokens={onKeycloakTokens}
+    >
+        <Component { ...props } />
+        </KeycloakProvider>,
         document.getElementById(elementId)
     );
 };

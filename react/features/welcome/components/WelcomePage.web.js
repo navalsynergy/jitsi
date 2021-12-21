@@ -214,12 +214,12 @@ class WelcomePage extends AbstractWelcomePage {
             : "without-footer";
 
         return (
-            <KeycloakProvider
-                keycloak={keycloak}
-                initConfig={keycloakProviderInitConfig}
-                onEvent={this.onKeycloakEvent}
-                onTokens={this.onKeycloakTokens}
-            >
+            // <KeycloakProvider
+            //     keycloak={keycloak}
+            //     initConfig={keycloakProviderInitConfig}
+            //     onEvent={this.onKeycloakEvent}
+            //     onTokens={this.onKeycloakTokens}
+            // >
                 <div
                     className={`welcome ${contentClassName} ${footerClassName}`}
                     id="welcome_page"
@@ -333,7 +333,7 @@ class WelcomePage extends AbstractWelcomePage {
                     </div>
                     {DISPLAY_WELCOME_FOOTER && this._renderFooter()}
                 </div>
-            </KeycloakProvider>
+            
         );
     }
 
