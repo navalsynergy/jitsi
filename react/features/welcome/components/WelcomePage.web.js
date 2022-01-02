@@ -220,37 +220,52 @@ class WelcomePage extends AbstractWelcomePage {
             //     onEvent={this.onKeycloakEvent}
             //     onTokens={this.onKeycloakTokens}
             // >
-                <div
-                    className={`welcome ${contentClassName} ${footerClassName}`}
-                    id="welcome_page"
-                >
-                    <div className="welcome-watermark">
-                        <Watermarks
-                            defaultJitsiLogoURL={DEFAULT_WELCOME_PAGE_LOGO_URL}
-                        />
-                    </div>
+            <div
+                className={`welcome ${contentClassName} ${footerClassName}`}
+                id="welcome_page"
+            >
+                <div className="welcome-watermark">
+                    <Watermarks
+                        defaultJitsiLogoURL={DEFAULT_WELCOME_PAGE_LOGO_URL}
+                    />
+                </div>
 
-                    <div className="header">
-                        <div className="welcome-page-settings">
-                            <SettingsButton
-                                defaultTab={SETTINGS_TABS.CALENDAR}
+                <div className="header">
+                    <div className="welcome-page-settings">
+                        <SettingsButton defaultTab={SETTINGS_TABS.CALENDAR} />
+                        {showAdditionalToolbarContent ? (
+                            <div
+                                className="settings-toolbar-content"
+                                ref={this._setAdditionalToolbarContentRef}
                             />
-                            {showAdditionalToolbarContent ? (
-                                <div
-                                    className="settings-toolbar-content"
-                                    ref={this._setAdditionalToolbarContentRef}
-                                />
-                            ) : null}
+                        ) : null}
+                    </div>
+                    <div className="header-image" />
+                    <div className="header-container">
+                        <h1 className="header-text-title">
+                            {"Durchere Meet"}
+                            {/* {t("welcomepage.headerTitle")} */}
+                        </h1>
+                        <span className="header-text-subtitle">
+                            {t("welcomepage.headerSubtitle")}
+                        </span>
+                        <div id="enter_room">
+                            <button
+                                aria-disabled="false"
+                                aria-label="Start meeting"
+                                className="welcome-page-button"
+                                id="enter_room_button"
+                                onClick={() => {
+                                    window.location.href =
+                                        "https://qa.durchere.in/";
+                                }}
+                                tabIndex="0"
+                                type="button"
+                            >
+                                {"Durchere Home"}
+                            </button>
                         </div>
-                        <div className="header-image" />
-                        <div className="header-container">
-                            <h1 className="header-text-title">
-                                {t("welcomepage.headerTitle")}
-                            </h1>
-                            <span className="header-text-subtitle">
-                                {t("welcomepage.headerSubtitle")}
-                            </span>
-                            <div id="enter_room">
+                        {/* <div id="enter_room">
                                 <div className="enter-room-input-container">
                                     <form onSubmit={this._onFormSubmit}>
                                         <input
@@ -295,45 +310,44 @@ class WelcomePage extends AbstractWelcomePage {
                                 >
                                     {t("welcomepage.startMeeting")}
                                 </button>
-                            </div>
+                            </div> */}
 
-                            {_moderatedRoomServiceUrl && (
-                                <div id="moderated-meetings">
-                                    <p>
-                                        {translateToHTML(
-                                            t,
-                                            "welcomepage.moderatedMessage",
-                                            { url: _moderatedRoomServiceUrl }
-                                        )}
-                                    </p>
-                                </div>
-                            )}
-                        </div>
+                        {_moderatedRoomServiceUrl && (
+                            <div id="moderated-meetings">
+                                <p>
+                                    {translateToHTML(
+                                        t,
+                                        "welcomepage.moderatedMessage",
+                                        { url: _moderatedRoomServiceUrl }
+                                    )}
+                                </p>
+                            </div>
+                        )}
                     </div>
+                </div>
 
-                    <div className="welcome-cards-container">
-                        <div className="welcome-card-row">
-                            <div className="welcome-tabs welcome-card welcome-card--blue">
-                                {this._renderTabs()}
-                            </div>
-                            {showAdditionalCard ? (
-                                <div
-                                    className="welcome-card welcome-card--dark"
-                                    ref={this._setAdditionalCardRef}
-                                />
-                            ) : null}
+                <div className="welcome-cards-container">
+                    <div className="welcome-card-row">
+                        <div className="welcome-tabs welcome-card welcome-card--blue">
+                            {this._renderTabs()}
                         </div>
-
-                        {showAdditionalContent ? (
+                        {showAdditionalCard ? (
                             <div
-                                className="welcome-page-content"
-                                ref={this._setAdditionalContentRef}
+                                className="welcome-card welcome-card--dark"
+                                ref={this._setAdditionalCardRef}
                             />
                         ) : null}
                     </div>
-                    {DISPLAY_WELCOME_FOOTER && this._renderFooter()}
+
+                    {showAdditionalContent ? (
+                        <div
+                            className="welcome-page-content"
+                            ref={this._setAdditionalContentRef}
+                        />
+                    ) : null}
                 </div>
-            
+                {DISPLAY_WELCOME_FOOTER && this._renderFooter()}
+            </div>
         );
     }
 
